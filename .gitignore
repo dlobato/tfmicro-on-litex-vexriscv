@@ -1,0 +1,8 @@
+.vscode/
+*.o
+*.su
+*.d
+*.map
+*.elf
+*.bin
+*.asm
