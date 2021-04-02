@@ -1,4 +1,7 @@
 .vscode/
+.idea/
+build/
+venv
 *.o
 *.su
 *.d

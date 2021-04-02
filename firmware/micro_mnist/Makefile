@@ -19,6 +19,8 @@ DEFS := -DTF_LITE_STATIC_MEMORY \
 		-DTF_LITE_USE_GLOBAL_MIN \
 		-DTF_LITE_USE_GLOBAL_MAX \
 		-DMODEL_DATA_FILE=\"model.tflite\" \
+		-DTEST_IMAGES_DATA_FILE=\"test_images.bin\" \
+		-DTEST_LABELS_DATA_FILE=\"test_labels.bin\" \
 		-DTFLITE_EMULATE_FLOAT
 CFLAGS += $(DEFS) -funsigned-char -Wno-sign-compare
 CXXFLAGS += $(DEFS) -funsigned-char -Wno-sign-compare
@@ -95,6 +97,7 @@ $(TFMICRO_PATH)/tensorflow/lite/schema/schema_utils.cc
 SRCS := $(MICROLITE_CC_KERNEL_SRCS) \
 		$(MICROLITE_CC_SRCS) \
 		model_data.S \
+		test_data.S \
 		main.cpp \
 		isr.c \
 		debug_log.cc \
