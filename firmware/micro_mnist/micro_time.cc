@@ -27,13 +27,17 @@ limitations under the License.
 
 #include "tensorflow/lite/micro/micro_time.h"
 #include <generated/csr.h>
-#include <ctime>
+#include "riscv.h"
 
 
 namespace tflite {
 
 int32_t ticks_per_second() { return CONFIG_CLOCK_FREQUENCY; }
 
-int32_t GetCurrentTimeTicks() { return clock(); }
+int32_t GetCurrentTimeTicks() {
+    uint64_t cycles;
+
+	return (int32_t)read_csr(mcycle);
+}
 
 }  // namespace tflite

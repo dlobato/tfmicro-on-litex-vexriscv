@@ -1,5 +1,5 @@
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-LITEX_BUILD_DIR ?= $(realpath $(ROOT_DIR)/../build/ulx3s)
+LITEX_BUILD_DIR ?= $(realpath $(ROOT_DIR)/../build/sim)
 include $(LITEX_BUILD_DIR)/software/include/generated/variables.mak
 
 TARGET_TOOLCHAIN_PREFIX ?= riscv-none-embed-

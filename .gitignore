@@ -9,3 +9,5 @@ venv
 *.elf
 *.bin
 *.asm
+csr.csv
+sim.gtkw
