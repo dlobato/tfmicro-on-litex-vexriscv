@@ -24,7 +24,7 @@ DEFS := -DTF_LITE_STATIC_MEMORY \
 		-DTFLITE_EMULATE_FLOAT
 CFLAGS += $(DEFS) -funsigned-char -Wno-sign-compare
 CXXFLAGS += $(DEFS) -funsigned-char -Wno-sign-compare
-LIBS += -lm
+LIBS += -lm -lsupc++
 
 MICROLITE_CC_KERNEL_SRCS := \
 $(TFMICRO_PATH)/tensorflow/lite/micro/kernels/activations.cc \
@@ -111,8 +111,6 @@ OBJS := $(OBJS:.S=.o)
 OBJS := $(OBJS:.s=.o)
 OBJS := $(ROOT_DIR)/rt/crt0.o \
 		$(ROOT_DIR)/rt/init.o \
-		$(ROOT_DIR)/rt/supc++.o \
-		$(ROOT_DIR)/libgloss/syscall.o \
 		uart.o \
 		$(OBJS)
 

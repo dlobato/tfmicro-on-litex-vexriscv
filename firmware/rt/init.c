@@ -1,6 +1,9 @@
 // adapted from https://raw.githubusercontent.com/RISCV-on-Microsemi-FPGA/SoftConsole/master/riscv-simple-baremetal-bootloader/riscv_hal/init.c
 // with https://github.com/RISCV-on-Microsemi-FPGA/SoftConsole/pull/19
 #include <stdint.h>
+#include <stdlib.h>
+
+#include <generated/csr.h>
 #include "riscv.h"
 
 #ifdef __cplusplus
@@ -42,7 +45,16 @@ static void zero_section(uint32_t * start, uint32_t * end)
     }
 }
 
-void _init(void)
+void _exit(int code)
+{
+#ifdef CSR_SIM_FINISH_BASE
+    sim_trace_enable_write(0);
+    sim_finish_finish_write(1);
+#endif
+    while (1);
+}
+
+__attribute__((noreturn)) void _init(void)
 {
     extern int main();
 
@@ -54,8 +66,8 @@ void _init(void)
     //enable m_ext & m_timer interrupts
     write_csr(mie, MIP_MTIP | MIP_MEIP);
     
-    main();
-    while(1) {}
+    exit(main());
+    __builtin_unreachable();
 }
 
 #ifdef __cplusplus

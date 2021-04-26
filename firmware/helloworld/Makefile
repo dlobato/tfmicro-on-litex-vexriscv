@@ -23,7 +23,6 @@ uart.o: $(LIBBASE_DIRECTORY)/uart.c
 
 .PHONY : clean
 clean:
-	echo $(ROOT_DIR)
 	-rm -f $(OBJS) $(OBJS:.o=.d) $(OBJS:.o=.su) $(PROJ_NAME).elf $(PROJ_NAME).asm $(PROJ_NAME).bin $(MAP_NAME)
 
 .SECONDARY: $(OBJS)

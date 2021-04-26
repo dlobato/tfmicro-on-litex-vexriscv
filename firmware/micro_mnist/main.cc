@@ -30,6 +30,8 @@ int main()
 #endif
   uart_init();
 
+  MicroPrintf("Micro MNIST: start");
+
   // Set up profiling
   tflite::MicroProfiler profiler;
 
@@ -83,7 +85,8 @@ int main()
   }
 
   int matched = 0;
-  for (size_t n = 0; n < n_images; n++)
+  const size_t test_n_images = 10;
+  for (size_t n = 0; n < test_n_images; n++)
   {
     uint8_t* input_image = test_images + (n*image_size);
     uint8_t input_label = test_labels[n];
@@ -115,5 +118,7 @@ int main()
     profiler.Log();
   }
 
-  MicroPrintf("Micro MNIST: matched=%d of %d", matched, n_images);
+  MicroPrintf("Micro MNIST: matched=%d of %d", matched, test_n_images);
+
+  return 0;
 }

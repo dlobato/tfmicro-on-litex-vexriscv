@@ -1,0 +1,68 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      # Checkout Repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      # Install Tools
+      - name: Install Tools
+        run: |
+          sudo apt-get install wget build-essential python3 verilator libevent-dev libjson-c-dev
+          pip3 install setuptools
+          pip3 install requests
+      # Install (n)Migen / LiteX / Cores
+      - name: Cache LiteX
+        id: cache-litex
+        uses: actions/cache@v2
+        with:
+          path: ~/litex
+          key: ${{ runner.os }}-litex
+      - name: Install LiteX
+        if: steps.cache-litex.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p $HOME/litex && cd $HOME/litex
+          wget https://raw.githubusercontent.com/enjoy-digital/litex/master/litex_setup.py
+          python3 litex_setup.py init install --user
+      - name: Update LiteX
+        if: steps.cache-litex.outputs.cache-hit == 'true'
+        run: |
+          cd $HOME/litex
+          python3 litex_setup.py update install --user
+      
+      - name: Cache gcc
+        id: cache-gcc
+        uses: actions/cache@v2
+        with:
+          path: ~/xpack-riscv-none-embed-gcc-10.1.0-1.1
+          key: ${{ runner.os }}-xpack-riscv-none-embed-gcc-10.1.0-1.1
+      - name: Install gcc
+        if: steps.cache-gcc.outputs.cache-hit != 'true'
+        run: |
+          wget -nv https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v10.1.0-1.1/xpack-riscv-none-embed-gcc-10.1.0-1.1-linux-x64.tar.gz
+          tar zxf xpack-riscv-none-embed-gcc-10.1.0-1.1-linux-x64.tar.gz -C $HOME
+          $HOME/xpack-riscv-none-embed-gcc-10.1.0-1.1/bin/riscv-none-embed-gcc --version
+
+      - name: Add gcc path
+        run: echo "$HOME/xpack-riscv-none-embed-gcc-10.1.0-1.1/bin" >> $GITHUB_PATH
+        
+      - name: Build firmware
+        run: |
+          python3 sim.py --cpu-variant imac --no-compile-gateware --no-compile-software
+          make -C firmware/micro_mnist
+
+      - name: Build simulation
+        run: |
+          python3 sim.py --cpu-variant imac --ram-init firmware/micro_mnist/micro_mnist.bin
+          cd build/sim/gateware && sh build_sim.sh
+
+      - name: Run simulation
+        run: |
+          cd build/sim/gateware && timeout 300 ./obj_dir/Vsim
+          
